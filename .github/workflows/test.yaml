@@ -1,5 +1,5 @@
 name: test
-on: [push, workflow_dispatch]
+on: [push, pull_request, workflow_dispatch]
 jobs:
   test:
     runs-on: ubuntu-24.04
@@ -22,6 +22,12 @@ jobs:
       - name: Install Python packages
         shell: bash
         run: pip install -r test/requirements.txt
+
+      - name: Lint Verilog
+        shell: bash
+        run: |
+          sudo apt-get install -y verilator
+          verilator --lint-only -Wall -Wno-DECLFILENAME -Wno-UNUSEDSIGNAL -Isrc src/peripheral.v
 
       - name: Run tests
         run: |
